@@ -1,16 +1,15 @@
-﻿using kenran.Samael.Radar;
-
-namespace kenran.Samael
+﻿namespace kenran.Samael
 {
+    using kenran.Samael.Radar;
     using Robocode;
 
     public class Samael : AdvancedRobot
     {
-        private readonly LockingRadar radar;
+        private readonly LockingRadar radar_;
 
         public Samael()
         {
-            radar = new LockingRadar(this);
+            radar_ = new LockingRadar(this);
         }
 
         public override void Run()
@@ -25,7 +24,7 @@ namespace kenran.Samael
 
         public override void OnScannedRobot(ScannedRobotEvent evnt)
         {
-            radar.OnScannedRobot(evnt);
+            radar_.OnScannedRobot(evnt);
         }
     }
 }

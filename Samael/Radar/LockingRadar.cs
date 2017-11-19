@@ -6,17 +6,18 @@
     internal sealed class LockingRadar
     {
         private const double LockMultiplier = 2.0d;
-        private readonly AdvancedRobot bot;
+        private readonly AdvancedRobot bot_;
 
         internal LockingRadar(AdvancedRobot bot)
         {
-            this.bot = bot;
+            bot_ = bot;
         }
 
         internal void OnScannedRobot(ScannedRobotEvent evnt)
         {
-            double radarTurn = Utils.NormalRelativeAngle(bot.HeadingRadians + evnt.BearingRadians - bot.RadarHeadingRadians);
-            bot.SetTurnRadarRightRadians(LockMultiplier * radarTurn);
+            double angleToEnemy = bot_.HeadingRadians + evnt.BearingRadians - bot_.RadarHeadingRadians;
+            double radarTurn = Utils.NormalRelativeAngle(angleToEnemy);
+            bot_.SetTurnRadarRightRadians(LockMultiplier * radarTurn);
         }
     }
 }
