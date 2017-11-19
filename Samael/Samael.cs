@@ -14,6 +14,9 @@
 
         public override void Run()
         {
+            IsAdjustRadarForGunTurn = true;
+            IsAdjustGunForRobotTurn = true;
+
             SetTurnRadarRightRadians(double.MaxValue);
 
             while (true)
