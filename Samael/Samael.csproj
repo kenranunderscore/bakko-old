@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>kenran.Samael</RootNamespace>
-    <AssemblyName>kenran.Samael_0.0.1</AssemblyName>
+    <AssemblyName>kenran.Samael_0.1</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
