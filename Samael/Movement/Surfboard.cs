@@ -17,7 +17,7 @@
         private static double enemyEnergy_ = 100d;
         private Point position_;
         private Point enemyPosition_;
-        private Rectangle field_;
+        private readonly Rectangle field_;
         private readonly AdvancedRobot bot_;
 
         private readonly IList<Wave> enemyWaves_ = new List<Wave>();
@@ -29,7 +29,8 @@
         public Surfboard(AdvancedRobot bot)
         {
             bot_ = bot;
-            field_ = new Rectangle(18d, 18d, bot_.BattleFieldWidth - 18d, bot_.BattleFieldHeight - 18d);
+            double halfBotWidth = bot_.Width / 2d;
+            field_ = new Rectangle(halfBotWidth, halfBotWidth, bot_.BattleFieldWidth - bot_.Width, bot_.BattleFieldHeight - bot.Width);
         }
 
         public void OnScannedRobot(ScannedRobotEvent evnt)
