@@ -261,3 +261,7 @@ __pycache__/
 *.pyc
 /.metadata/
 /.recommenders/
+
+# Eclipse files
+.classpath
+.project
