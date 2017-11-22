@@ -1,21 +1,25 @@
 ﻿namespace kenran.Samael
 {
+    using kenran.Samael.Movement;
     using kenran.Samael.Radar;
     using Robocode;
 
     public class Samael : AdvancedRobot
     {
-        private readonly LockingRadar radar_;
+        private LockingRadar radar_;
+        private Surfboard surfboard_;
 
         public Samael()
         {
-            radar_ = new LockingRadar(this);
         }
 
         public override void Run()
         {
             IsAdjustRadarForGunTurn = true;
             IsAdjustGunForRobotTurn = true;
+
+            radar_ = new LockingRadar(this);
+            surfboard_ = new Surfboard(this);
 
             SetTurnRadarRightRadians(double.MaxValue);
 
@@ -28,6 +32,12 @@
         public override void OnScannedRobot(ScannedRobotEvent evnt)
         {
             radar_.OnScannedRobot(evnt);
+            surfboard_.OnScannedRobot(evnt);
+        }
+
+        public override void OnHitByBullet(HitByBulletEvent evnt)
+        {
+            surfboard_.OnHitByBullet(evnt);
         }
     }
 }

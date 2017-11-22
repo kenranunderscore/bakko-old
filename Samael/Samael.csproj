@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -44,9 +45,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Movement\Surfboard.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Radar\LockingRadar.cs" />
     <Compile Include="Samael.cs" />
+    <Compile Include="Utilities\Generic\Point.cs" />
+    <Compile Include="Utilities\Generic\Rectangle.cs" />
+    <Compile Include="Utilities\RoboUtils.cs" />
+    <Compile Include="Utilities\Wave.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
