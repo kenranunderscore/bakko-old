@@ -21,7 +21,7 @@ class Surfboard(bot: AdvancedRobot) {
     private var _absoluteBearings = listOf<Double>()
     
     init {
-        _position = Point2D.Double(_bot.getX(), _bot.getY())
+        _position = Point2D.Double(_bot.x, _bot.y)
         _enemyPosition = Point2D.Double()
         _fieldRect = Rectangle2D.Double(18.0, 18.0, 800.0, 600.0)
     }

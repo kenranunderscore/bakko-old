@@ -10,15 +10,11 @@ class Oldur : AdvancedRobot() {
         private const val RADAR_LOCK_MULTIPLIER: Double = 2.0
     }
 
-    private val _radar: LockingRadar
-    private var _surfboard: Surfboard? = null
-
-    init {
-        _radar = LockingRadar(this, RADAR_LOCK_MULTIPLIER)
-    }
-
+    private lateinit var _radar: LockingRadar
+    private lateinit var _surfboard: Surfboard
 
 	override fun run() {
+        _radar = LockingRadar(this, RADAR_LOCK_MULTIPLIER)
         _surfboard = Surfboard(this)
 
 		isAdjustGunForRobotTurn = true
