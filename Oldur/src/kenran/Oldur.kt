@@ -3,6 +3,7 @@ package kenran
 import kenran.movement.Surfboard
 import robocode.AdvancedRobot
 import kenran.radar.LockingRadar
+import robocode.HitByBulletEvent
 import robocode.ScannedRobotEvent
 
 class Oldur : AdvancedRobot() {
@@ -30,5 +31,9 @@ class Oldur : AdvancedRobot() {
     override fun onScannedRobot(e: ScannedRobotEvent) {
         _radar.onScannedRobot(e)
         _surfboard.onScannedRobot(e)
+    }
+
+    override fun onHitByBullet(e: HitByBulletEvent) {
+        _surfboard.onHitByBullet(e)
     }
 }
