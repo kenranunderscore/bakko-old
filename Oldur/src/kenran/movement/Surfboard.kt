@@ -9,7 +9,7 @@ class Surfboard(bot: AdvancedRobot) {
     companion object {
         private const val BINS: Int = 47
     	private const val WALL_STICK_LENGTH: Double = 160.0
-        private var _surfStats: DoubleArray = DoubleArray(BINS)
+        private var surfStats: DoubleArray = DoubleArray(BINS)
     }
     
     private val _bot: AdvancedRobot = bot

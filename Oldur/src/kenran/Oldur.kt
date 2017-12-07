@@ -28,6 +28,7 @@ class Oldur : AdvancedRobot() {
     }
 
 	override fun onScannedRobot(e: ScannedRobotEvent) {
-		_radar.OnScannedRobot(e)
+		_radar.onScannedRobot(e)
+        _surfboard.onScannedRobot(e)
 	}
 }
