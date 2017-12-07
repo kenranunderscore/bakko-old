@@ -13,22 +13,22 @@ class Oldur : AdvancedRobot() {
     private lateinit var _radar: LockingRadar
     private lateinit var _surfboard: Surfboard
 
-	override fun run() {
+    override fun run() {
         _radar = LockingRadar(this, RADAR_LOCK_MULTIPLIER)
         _surfboard = Surfboard(this)
 
-		isAdjustGunForRobotTurn = true
-		isAdjustRadarForGunTurn = true
+        isAdjustGunForRobotTurn = true
+        isAdjustRadarForGunTurn = true
 
 		setTurnRadarRightRadians(Double.MAX_VALUE)
 
-		while (true) {
-			scan()
+        while (true) {
+            scan()
         }
     }
 
 	override fun onScannedRobot(e: ScannedRobotEvent) {
 		_radar.onScannedRobot(e)
         _surfboard.onScannedRobot(e)
-	}
+    }
 }
