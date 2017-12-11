@@ -1,3 +1,11 @@
+apply plugin: 'kotlin'
+apply plugin: 'java'
+
+group 'kenran'
+version '0.1'
+
+jar.archiveName = "${group}.${name}_${version}.jar"
+
 buildscript {
     ext.kotlin_version = '1.2.0'
 
@@ -9,23 +17,56 @@ buildscript {
     }
 }
 
-group 'kenran'
-version '1.0-SNAPSHOT'
-
-apply plugin: 'kotlin'
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile files('lib/robocode.jar')
 }
 
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
 }
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+
+task copyKotlinRuntime << {
+    def configuration = project.configurations.getByName("compile")
+    def allDependencies = configuration.getResolvedConfiguration().getResolvedArtifacts().collect() {
+        return it.file
+    }
+    println(allDependencies)
+    project.copy {
+        from(zipTree(allDependencies[1]))
+        from(zipTree(allDependencies[0]))
+        into(sourceSets.main.output.getClassesDirs().last())
+    }
 }
+
+task createPropertiesFile << {
+    def kotlinOutputDir = sourceSets.main.output.getClassesDirs().last()
+    def targetFile = file("${kotlinOutputDir}/kenran/${project.name}.properties")
+    if (targetFile.parentFile.exists()) {
+        targetFile.parentFile.mkdirs()
+    }
+
+    def writer = targetFile.newWriter()
+    writer << "robot.description=Nothing interesting yet\n"
+    writer << "robocode.version=1.9\n"
+    writer << "robot.java.source.included=true\n"
+    writer << "robot.version=${project.version}\n"
+    writer << "robot.author.name=kenran\n"
+    writer << "robot.classname=kenran.${project.name}\n"
+    writer << "robot.name=${project.name}\n"
+    writer.flush()
+    writer.close()
+}
+
+task copyJarToRobocodeDir(type: Copy) {
+    from "build/libs/${jar.archiveName}"
+    into "d:/robocode/robots"
+}
+
+jar.dependsOn createPropertiesFile
+jar.dependsOn copyKotlinRuntime
+jar.finalizedBy copyJarToRobocodeDir
