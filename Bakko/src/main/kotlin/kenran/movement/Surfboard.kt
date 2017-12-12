@@ -86,7 +86,6 @@ class Surfboard(bot: AdvancedRobot) {
 
     private fun logHit(wave: Wave, targetPosition: Point2D.Double) {
         val index = getFactorIndex(wave, targetPosition)
-        println(index)
         for (i in 0..46) {
             surfStats[i] += 1.0 / (1.0 + Math.pow(index - i.toDouble(), 2.0))
         }

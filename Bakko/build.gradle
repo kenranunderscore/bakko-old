@@ -23,6 +23,8 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     compile files('lib/robocode.jar')
 }
 
@@ -35,8 +37,10 @@ task copyKotlinRuntime << {
     def allDependencies = configuration.getResolvedConfiguration().getResolvedArtifacts().collect() {
         return it.file
     }
-    println(allDependencies)
     project.copy {
+        from(zipTree(allDependencies[4]))
+        from(zipTree(allDependencies[3]))
+        from(zipTree(allDependencies[2]))
         from(zipTree(allDependencies[1]))
         from(zipTree(allDependencies[0]))
         into(sourceSets.main.output.getClassesDirs().last())
@@ -66,6 +70,8 @@ task copyJarToRobocodeDir(type: Copy) {
     from "build/libs/${jar.archiveName}"
     into "d:/robocode/robots"
 }
+
+build.dependsOn copyKotlinRuntime
 
 jar.dependsOn createPropertiesFile
 jar.dependsOn copyKotlinRuntime
