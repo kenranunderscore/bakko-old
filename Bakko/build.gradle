@@ -32,38 +32,38 @@ sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
 }
 
-task copyKotlinRuntime << {
+task copyKotlinRuntime(type: Copy) {
     def configuration = project.configurations.getByName("compile")
     def allDependencies = configuration.getResolvedConfiguration().getResolvedArtifacts().collect() {
         return it.file
     }
-    project.copy {
-        from(zipTree(allDependencies[4]))
-        from(zipTree(allDependencies[3]))
-        from(zipTree(allDependencies[2]))
-        from(zipTree(allDependencies[1]))
-        from(zipTree(allDependencies[0]))
-        into(sourceSets.main.output.getClassesDirs().last())
-    }
+    from(zipTree(allDependencies[4]))
+    from(zipTree(allDependencies[3]))
+    from(zipTree(allDependencies[2]))
+    from(zipTree(allDependencies[1]))
+    from(zipTree(allDependencies[0]))
+    into(sourceSets.main.output.getClassesDirs().last())
 }
 
-task createPropertiesFile << {
-    def kotlinOutputDir = sourceSets.main.output.getClassesDirs().last()
-    def targetFile = file("${kotlinOutputDir}/kenran/${project.name}.properties")
-    if (targetFile.parentFile.exists()) {
-        targetFile.parentFile.mkdirs()
-    }
+task createPropertiesFile {
+    doLast {
+        def kotlinOutputDir = sourceSets.main.output.getClassesDirs().last()
+        def targetFile = file("${kotlinOutputDir}/kenran/${project.name}.properties")
+        if (targetFile.parentFile.exists()) {
+            targetFile.parentFile.mkdirs()
+        }
 
-    def writer = targetFile.newWriter()
-    writer << "robot.description=Nothing interesting yet\n"
-    writer << "robocode.version=1.9\n"
-    writer << "robot.java.source.included=true\n"
-    writer << "robot.version=${project.version}\n"
-    writer << "robot.author.name=kenran\n"
-    writer << "robot.classname=kenran.${project.name}\n"
-    writer << "robot.name=${project.name}\n"
-    writer.flush()
-    writer.close()
+        def writer = targetFile.newWriter()
+        writer << "robot.description=Nothing interesting yet\n"
+        writer << "robocode.version=1.9\n"
+        writer << "robot.java.source.included=true\n"
+        writer << "robot.version=${project.version}\n"
+        writer << "robot.author.name=kenran\n"
+        writer << "robot.classname=kenran.${project.name}\n"
+        writer << "robot.name=${project.name}\n"
+        writer.flush()
+        writer.close()
+    }
 }
 
 task copyJarToRobocodeDir(type: Copy) {
@@ -71,8 +71,10 @@ task copyJarToRobocodeDir(type: Copy) {
     into "d:/robocode/robots"
 }
 
-build.dependsOn copyKotlinRuntime
+task justCompile {}
+justCompile.dependsOn compileKotlin
+justCompile.dependsOn copyKotlinRuntime
 
-jar.dependsOn createPropertiesFile
-jar.dependsOn copyKotlinRuntime
-jar.finalizedBy copyJarToRobocodeDir
+build.dependsOn createPropertiesFile
+build.dependsOn copyKotlinRuntime
+build.finalizedBy copyJarToRobocodeDir
