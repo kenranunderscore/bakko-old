@@ -37,17 +37,23 @@ task copyKotlinRuntime(type: Copy) {
     def allDependencies = configuration.getResolvedConfiguration().getResolvedArtifacts().collect() {
         return it.file
     }
-
-    for (dep in allDependencies) {
-        from zipTree(dep)
+    def kotlinClassesDir = sourceSets.main.output.getClassesDirs().find {
+        it.toString().contains("kotlin")
     }
-    into sourceSets.main.output.getClassesDirs().last()
+
+    allDependencies.each {
+        println "Copying dependency ${it.name}"
+        from zipTree(it)
+    }
+    into kotlinClassesDir
 }
 
 task createPropertiesFile {
     doLast {
-        def kotlinOutputDir = sourceSets.main.output.getClassesDirs().last()
-        def targetFile = file("${kotlinOutputDir}/kenran/${project.name}.properties")
+        def kotlinClassesDir = sourceSets.main.output.getClassesDirs().find() {
+            it.toString().contains("kotlin")
+        }
+        def targetFile = file("${kotlinClassesDir}/kenran/${project.name}.properties")
         if (targetFile.parentFile.exists()) {
             targetFile.parentFile.mkdirs()
         }
@@ -70,9 +76,9 @@ task copyJarToRobocodeDir(type: Copy) {
     into "d:/robocode/robots"
 }
 
-task justCompile {}
-justCompile.dependsOn compileKotlin
-justCompile.dependsOn copyKotlinRuntime
+task compileAndCopy {}
+compileAndCopy.dependsOn compileKotlin
+compileAndCopy.dependsOn copyKotlinRuntime
 
 build.dependsOn createPropertiesFile
 build.dependsOn copyKotlinRuntime
