@@ -37,12 +37,11 @@ task copyKotlinRuntime(type: Copy) {
     def allDependencies = configuration.getResolvedConfiguration().getResolvedArtifacts().collect() {
         return it.file
     }
-    from(zipTree(allDependencies[4]))
-    from(zipTree(allDependencies[3]))
-    from(zipTree(allDependencies[2]))
-    from(zipTree(allDependencies[1]))
-    from(zipTree(allDependencies[0]))
-    into(sourceSets.main.output.getClassesDirs().last())
+
+    for (dep in allDependencies) {
+        from zipTree(dep)
+    }
+    into sourceSets.main.output.getClassesDirs().last()
 }
 
 task createPropertiesFile {
