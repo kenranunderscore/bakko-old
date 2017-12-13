@@ -42,7 +42,7 @@ task copyKotlinRuntime(type: Copy) {
     }
 
     allDependencies.each {
-        println "Copying dependency ${it.name}"
+        println "Checking dependency ${it.name}"
         from zipTree(it)
     }
     into kotlinClassesDir
@@ -54,7 +54,7 @@ task createPropertiesFile {
             it.toString().contains("kotlin")
         }
         def targetFile = file("${kotlinClassesDir}/kenran/${project.name}.properties")
-        if (targetFile.parentFile.exists()) {
+        if (!targetFile.parentFile.exists()) {
             targetFile.parentFile.mkdirs()
         }
 
