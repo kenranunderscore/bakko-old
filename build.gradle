@@ -4,8 +4,6 @@ apply plugin: 'java'
 group 'kenran'
 version '0.1'
 
-jar.archiveName = "${group}.${name}_${version}.jar"
-
 buildscript {
     ext.kotlin_version = '1.2.0'
 
@@ -31,6 +29,11 @@ dependencies {
 sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
 }
+
+def gitHash = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+def robotVersion = "${project.version}.${gitHash}"
+
+jar.archiveName = "${group}.${name}_${robotVersion}.jar"
 
 task copyKotlinRuntime(type: Copy) {
     def configuration = project.configurations.getByName("compile")
@@ -62,7 +65,7 @@ task createPropertiesFile {
         writer << "robot.description=Nothing interesting yet\n"
         writer << "robocode.version=1.9\n"
         writer << "robot.java.source.included=true\n"
-        writer << "robot.version=${project.version}\n"
+        writer << "robot.version=${robotVersion}\n"
         writer << "robot.author.name=kenran\n"
         writer << "robot.classname=kenran.${project.name}\n"
         writer << "robot.name=${project.name}\n"
@@ -80,6 +83,6 @@ task compileAndCopy {}
 compileAndCopy.dependsOn compileKotlin
 compileAndCopy.dependsOn copyKotlinRuntime
 
-build.dependsOn createPropertiesFile
-build.dependsOn copyKotlinRuntime
+jar.dependsOn createPropertiesFile
+jar.dependsOn copyKotlinRuntime
 build.finalizedBy copyJarToRobocodeDir
