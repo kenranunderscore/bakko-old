@@ -1,5 +1,6 @@
 package kenran
 
+import kenran.gun.CircularTargetingGun
 import kenran.movement.Surfboard
 import kenran.radar.LockingRadar
 import robocode.AdvancedRobot
@@ -13,10 +14,12 @@ class Bakko: AdvancedRobot() {
 
     private lateinit var _radar: LockingRadar
     private lateinit var _surfboard: Surfboard
+    private lateinit var _gun: CircularTargetingGun
 
     override fun run() {
         _radar = LockingRadar(this, RADAR_LOCK_MULTIPLIER)
         _surfboard = Surfboard(this)
+        _gun = CircularTargetingGun(this)
 
         isAdjustGunForRobotTurn = true
         isAdjustRadarForGunTurn = true
@@ -31,6 +34,7 @@ class Bakko: AdvancedRobot() {
     override fun onScannedRobot(e: ScannedRobotEvent) {
         _radar.onScannedRobot(e)
         _surfboard.onScannedRobot(e)
+        _gun.onScannedRobot(e)
     }
 
     override fun onHitByBullet(e: HitByBulletEvent) {
