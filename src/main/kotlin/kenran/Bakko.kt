@@ -4,6 +4,7 @@ import kenran.gun.CircularTargetingGun
 import kenran.movement.Surfboard
 import kenran.radar.LockingRadar
 import robocode.AdvancedRobot
+import robocode.BulletHitBulletEvent
 import robocode.HitByBulletEvent
 import robocode.ScannedRobotEvent
 
@@ -39,5 +40,9 @@ class Bakko: AdvancedRobot() {
 
     override fun onHitByBullet(e: HitByBulletEvent) {
         _surfboard.onHitByBullet(e)
+    }
+
+    override fun onBulletHitBullet(e: BulletHitBulletEvent) {
+        _surfboard.onBulletHitBullet(e)
     }
 }

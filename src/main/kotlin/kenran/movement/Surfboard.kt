@@ -2,6 +2,7 @@ package kenran.movement
 
 import kenran.util.*
 import robocode.AdvancedRobot
+import robocode.BulletHitBulletEvent
 import robocode.HitByBulletEvent
 import java.awt.geom.Point2D
 import java.awt.geom.Rectangle2D
@@ -28,11 +29,11 @@ class Surfboard(bot: AdvancedRobot) {
     init {
         _position = Point2D.Double(_bot.x, _bot.y)
         _enemyPosition = Point2D.Double()
-        _field = Rectangle2D.Double(18.0, 18.0, 800.0, 600.0)
+        _field = Rectangle2D.Double(18.0, 18.0, _bot.battleFieldWidth - 18.0, _bot.battleFieldHeight - 18.0)
     }
     
     fun onScannedRobot(e: ScannedRobotEvent) {
-        _position = Point2D.Double(_bot.x, _bot.y)
+        _position.setLocation(_bot.x, _bot.y)
         val lateralVelocity = _bot.velocity * Math.sin(e.bearingRadians)
         val absoluteBearing = e.bearingRadians + _bot.headingRadians
         _surfDirections.add(0, if (lateralVelocity >= 0) 1 else -1)
@@ -64,6 +65,21 @@ class Surfboard(bot: AdvancedRobot) {
         val hitPosition = Point2D.Double(e.bullet.x, e.bullet.y)
         val hitWave = _enemyWaves.firstOrNull {
             Math.abs(it.traveledDistance - _position.distance(it.firePosition)) < 50.0
+                    && Math.abs(e.bullet.velocity - it.bulletVelocity) < 0.001 }
+        if (hitWave != null) {
+            logHit(hitWave, hitPosition)
+            _enemyWaves.remove(hitWave)
+        }
+    }
+
+    fun onBulletHitBullet(e: BulletHitBulletEvent) {
+        if (_enemyWaves.any()) {
+            return
+        }
+
+        val hitPosition = Point2D.Double(e.bullet.x, e.bullet.y)
+        val hitWave = _enemyWaves.firstOrNull {
+            Math.abs(it.traveledDistance - hitPosition.distance(it.firePosition)) < 50.0
                     && Math.abs(e.bullet.velocity - it.bulletVelocity) < 0.001 }
         if (hitWave != null) {
             logHit(hitWave, hitPosition)
