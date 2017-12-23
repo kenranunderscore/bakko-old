@@ -7,6 +7,7 @@ import robocode.AdvancedRobot
 import robocode.BulletHitBulletEvent
 import robocode.HitByBulletEvent
 import robocode.ScannedRobotEvent
+import java.awt.Graphics2D
 
 class Bakko: AdvancedRobot() {
     companion object {
@@ -44,5 +45,9 @@ class Bakko: AdvancedRobot() {
 
     override fun onBulletHitBullet(e: BulletHitBulletEvent) {
         _surfboard.onBulletHitBullet(e)
+    }
+
+    override fun onPaint(g: Graphics2D) {
+        _gun.onPaint(g)
     }
 }

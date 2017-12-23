@@ -1,5 +1,6 @@
 package kenran.gun
 
+import kenran.output.gfx.drawBot
 import kenran.util.bulletVelocity
 import kenran.util.limit
 import kenran.util.project
@@ -52,5 +53,9 @@ class CircularTargetingGun(bot: AdvancedRobot) {
             ++dt
         }
         return predictedPosition
+    }
+
+    fun onPaint(g: Graphics2D) {
+        drawBot(_predictedPosition, g)
     }
 }
