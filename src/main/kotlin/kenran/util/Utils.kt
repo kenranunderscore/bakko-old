@@ -67,3 +67,7 @@ fun setBackAsFront(bot: AdvancedRobot, targetAngle: Double)
         bot.setAhead(100.0)
     }
 }
+
+fun rollingAverage(currentAverage: Double, newValue: Double, n: Double, weight: Double): Double {
+    return (currentAverage * n + newValue * weight) / (n + weight)
+}

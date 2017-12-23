@@ -17,7 +17,7 @@ class CircularTargetingGun(bot: AdvancedRobot) {
         val position = Point2D.Double(_bot.x, _bot.y)
         _deltaHeading = e.headingRadians - _oldHeading
         _oldHeading = e.headingRadians
-        val power = Math.min(2.0, e.energy)
+        val power = Math.min(3.0, e.energy)
         val bulletVelocity = bulletVelocity(power)
         val absoluteBearing = _bot.headingRadians + e.bearingRadians
         var predictedPosition = project(position, absoluteBearing, e.distance)
@@ -32,7 +32,7 @@ class CircularTargetingGun(bot: AdvancedRobot) {
                 || predictedPosition.x > _bot.battleFieldWidth - 18.0
                 || predictedPosition.y > _bot.battleFieldHeight - 18.0) {
                 predictedPosition.x = limit(18.0, predictedPosition.x, _bot.battleFieldWidth - 18.0)
-                predictedPosition.y = limit(18.0, predictedPosition.y, _bot.battleFieldWidth - 18.0)
+                predictedPosition.y = limit(18.0, predictedPosition.y, _bot.battleFieldHeight - 18.0)
                 break
             }
             ++dt
