@@ -8,6 +8,7 @@ import robocode.BulletHitBulletEvent
 import robocode.HitByBulletEvent
 import robocode.ScannedRobotEvent
 import java.awt.Graphics2D
+import java.awt.geom.Point2D
 
 class Bakko: AdvancedRobot() {
     companion object {
@@ -17,6 +18,8 @@ class Bakko: AdvancedRobot() {
     private lateinit var _radar: LockingRadar
     private lateinit var _surfboard: Surfboard
     private lateinit var _gun: CircularTargetingGun
+
+    var position: Point2D.Double = Point2D.Double()
 
     override fun run() {
         _radar = LockingRadar(this, RADAR_LOCK_MULTIPLIER)
@@ -30,10 +33,12 @@ class Bakko: AdvancedRobot() {
 
         while (true) {
             scan()
+
         }
     }
 
     override fun onScannedRobot(e: ScannedRobotEvent) {
+        position.setLocation(x, y)
         _radar.onScannedRobot(e)
         _surfboard.onScannedRobot(e)
         _gun.onScannedRobot(e)

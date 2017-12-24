@@ -1,5 +1,6 @@
 package kenran.movement
 
+import kenran.Bakko
 import kenran.util.*
 import robocode.AdvancedRobot
 import robocode.BulletHitBulletEvent
@@ -9,7 +10,7 @@ import java.awt.geom.Rectangle2D
 import robocode.ScannedRobotEvent
 import robocode.util.Utils
 
-class Surfboard(bot: AdvancedRobot) {
+class Surfboard(bot: Bakko) {
     companion object {
         private const val BINS: Int = 47
     	private const val WALL_STICK_LENGTH: Double = 160.0
@@ -17,9 +18,8 @@ class Surfboard(bot: AdvancedRobot) {
         private var surfStats: DoubleArray = DoubleArray(BINS)
     }
     
-    private val _bot: AdvancedRobot = bot
+    private val _bot = bot
     private var _enemyEnergy: Double = 100.0
-    private var _position: Point2D.Double
     private var _enemyPosition: Point2D.Double
     private val _field: Rectangle2D.Double
     private var _surfDirections = mutableListOf<Int>()
@@ -27,13 +27,11 @@ class Surfboard(bot: AdvancedRobot) {
     private var _enemyWaves = mutableListOf<Wave>()
     
     init {
-        _position = Point2D.Double(_bot.x, _bot.y)
         _enemyPosition = Point2D.Double()
         _field = Rectangle2D.Double(18.0, 18.0, _bot.battleFieldWidth - 18.0, _bot.battleFieldHeight - 18.0)
     }
     
     fun onScannedRobot(e: ScannedRobotEvent) {
-        _position.setLocation(_bot.x, _bot.y)
         val lateralVelocity = _bot.velocity * Math.sin(e.bearingRadians)
         val absoluteBearing = e.bearingRadians + _bot.headingRadians
         _surfDirections.add(0, if (lateralVelocity >= 0) 1 else -1)
@@ -52,7 +50,7 @@ class Surfboard(bot: AdvancedRobot) {
         }
 
         _enemyEnergy = e.energy
-        _enemyPosition = project(_position, absoluteBearing, e.distance)
+        _enemyPosition = project(_bot.position, absoluteBearing, e.distance)
         updateWaves()
         surf()
     }
@@ -64,7 +62,7 @@ class Surfboard(bot: AdvancedRobot) {
 
         val hitPosition = Point2D.Double(e.bullet.x, e.bullet.y)
         val hitWave = _enemyWaves.firstOrNull {
-            Math.abs(it.traveledDistance - _position.distance(it.firePosition)) < 50.0
+            Math.abs(it.traveledDistance - _bot.position.distance(it.firePosition)) < 50.0
                     && Math.abs(e.bullet.velocity - it.bulletVelocity) < 0.001 }
         if (hitWave != null) {
             logHit(hitWave, hitPosition)
@@ -91,7 +89,7 @@ class Surfboard(bot: AdvancedRobot) {
         var closestDistance = 50000.0
         var targetWave: Wave? = null
         for (wave in _enemyWaves) {
-            val distance = _position.distance(wave.firePosition) - wave.traveledDistance
+            val distance = _bot.position.distance(wave.firePosition) - wave.traveledDistance
             if (distance > wave.bulletVelocity && distance < closestDistance) {
                 targetWave = wave
                 closestDistance = distance
@@ -116,14 +114,14 @@ class Surfboard(bot: AdvancedRobot) {
     private fun updateWaves() {
         for (wave in  _enemyWaves.toList()) {
             wave.traveledDistance = (_bot.time - wave.fireTime) * wave.bulletVelocity
-            if (wave.traveledDistance > _position.distance(wave.firePosition)) {
+            if (wave.traveledDistance > _bot.position.distance(wave.firePosition)) {
                 _enemyWaves.remove(wave)
             }
         }
     }
 
     private fun predictPosition(wave: Wave, direction: Int): Point2D.Double {
-        var predictedPosition = _position
+        var predictedPosition = _bot.position
         var predictedVelocity = _bot.velocity
         var predictedHeading = _bot.headingRadians
 
@@ -171,11 +169,11 @@ class Surfboard(bot: AdvancedRobot) {
         val wave = getClosestSurfableWave() ?: return
         val leftDanger = checkDanger(wave, -1)
         val rightDanger = checkDanger(wave, 1)
-        var targetAngle = absoluteBearing(wave.firePosition, _position)
+        var targetAngle = absoluteBearing(wave.firePosition, _bot.position)
         targetAngle = if (leftDanger < rightDanger) {
-            wallSmoothing(_field, _position, targetAngle - Math.PI / 2.0, -1, WALL_STICK_LENGTH)
+            wallSmoothing(_field, _bot.position, targetAngle - Math.PI / 2.0, -1, WALL_STICK_LENGTH)
         } else {
-            wallSmoothing(_field, _position, targetAngle + Math.PI / 2.0, 1, WALL_STICK_LENGTH)
+            wallSmoothing(_field, _bot.position, targetAngle + Math.PI / 2.0, 1, WALL_STICK_LENGTH)
         }
 
         setBackAsFront(_bot, targetAngle)
