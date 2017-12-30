@@ -2,6 +2,7 @@ package kenran.gun
 
 import kenran.Bakko
 import kenran.output.gfx.drawBot
+import kenran.util.CyclicArray
 import kenran.util.FixedSizeStack
 import kenran.util.bulletTravelTime
 import kenran.util.project
@@ -16,7 +17,7 @@ class PatternMatcher(bot: Bakko) {
         private const val PATTERN_MATCHER_LENGTH = 3000
         private const val RECENT_PATTERN_LENGTH = 20
         private const val MINIMUM_NUMBER_OF_RECORDS = 50
-        private val _recordedMovements = FixedSizeStack<MovementState>(PATTERN_MATCHER_LENGTH)
+        private val _recordedMovements = CyclicArray<MovementState>(PATTERN_MATCHER_LENGTH)
     }
 
     private val _bot = bot
@@ -37,7 +38,7 @@ class PatternMatcher(bot: Bakko) {
         _oldEnemyHeading = e.headingRadians
         record(deltaHeading, e.velocity)
         val power = 2.5
-        if (_recordedMovements.size > MINIMUM_NUMBER_OF_RECORDS && _recentMovements.size == RECENT_PATTERN_LENGTH) {
+        if (_recordedMovements.currentSize > MINIMUM_NUMBER_OF_RECORDS && _recentMovements.size == RECENT_PATTERN_LENGTH) {
             _predictedPosition = predictPosition(power)
             val theta = kenran.util.absoluteBearing(_bot.position, _predictedPosition)
             _bot.setTurnGunRightRadians(Utils.normalRelativeAngle(theta - _bot.gunHeadingRadians))
@@ -56,8 +57,8 @@ class PatternMatcher(bot: Bakko) {
         var travelTime = 0.0
         var turns = 0.0
         var j = matchIndex + 1
-        while (j < _recordedMovements.size && turns <= travelTime) {
-            val (deltaHeading, velocity) = _recordedMovements.peek(j)
+        while (j < _recordedMovements.currentSize && turns <= travelTime) {
+            val (deltaHeading, velocity) = _recordedMovements.get(j)
             predictedPosition.x += Math.sin(heading) * velocity
             predictedPosition.y += Math.cos(heading) * velocity
             heading += deltaHeading
@@ -71,17 +72,20 @@ class PatternMatcher(bot: Bakko) {
     private fun lastIndexOfMatchingSeries(): Int {
         val iterator = FixedSizeStack<MovementState>(RECENT_PATTERN_LENGTH)
         for (i in 0 until RECENT_PATTERN_LENGTH) {
-            iterator.push(_recordedMovements.peek(i))
+            iterator.push(_recordedMovements.get(i))
         }
         var minimalDistance = Double.POSITIVE_INFINITY
         var indexOfMinimalDistance = RECENT_PATTERN_LENGTH - 1
-        for (k in RECENT_PATTERN_LENGTH until _recordedMovements.size - MINIMUM_NUMBER_OF_RECORDS) {
-            val ms = _recordedMovements.peek(k)
+        for (k in RECENT_PATTERN_LENGTH until _recordedMovements.currentSize - MINIMUM_NUMBER_OF_RECORDS) {
+            val ms = _recordedMovements.get(k)
             iterator.push(ms)
             val d = compare(iterator, _recentMovements)
             if (d < minimalDistance) {
                 minimalDistance = d
                 indexOfMinimalDistance = k
+            }
+            if (d <= 0.01) {
+                break
             }
         }
         return indexOfMinimalDistance
