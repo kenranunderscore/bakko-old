@@ -29,7 +29,7 @@ class PatternMatcher(bot: Bakko) {
         val absoluteBearing = _bot.headingRadians + e.bearingRadians
         _enemyPosition.setLocation(project(_bot.position, absoluteBearing, e.distance))
         if (e.energy < 0.1) {
-            _bot.setTurnGunRightRadians(Utils.normalRelativeAngle(absoluteBearing))
+            _bot.setTurnGunRightRadians(Utils.normalRelativeAngle(absoluteBearing - _bot.gunHeadingRadians))
             _bot.setFire(0.1)
             return
         }
