@@ -26,11 +26,10 @@ dependencies {
     compile files('lib/robocode.jar')
 }
 
-def gitDescribe = 'git describe'.execute([], project.rootDir).text.trim()
-def gitVersion = gitDescribe.substring(0, gitDescribe.length() - 9)
-def robotVersion = "${gitVersion}"
+def gitDescribe = 'git describe --long'.execute([], project.rootDir).text.trim()
+def gitVersion = gitDescribe.substring(0, gitDescribe.length() - 9).replace('-', '.')
 
-jar.archiveName = "${group}.${name}_${robotVersion}.jar"
+jar.archiveName = "${group}.${name}_${gitVersion}.jar"
 
 task copyKotlinRuntime(type: Copy) {
     def configuration = project.configurations.getByName("compile")
@@ -62,7 +61,7 @@ task createPropertiesFile {
         writer << "robot.description=Nothing interesting yet\n"
         writer << "robocode.version=1.9\n"
         writer << "robot.java.source.included=true\n"
-        writer << "robot.version=${robotVersion}\n"
+        writer << "robot.version=${gitVersion}\n"
         writer << "robot.author.name=kenran\n"
         writer << "robot.classname=kenran.${project.name}\n"
         writer << "robot.name=${project.name}\n"
