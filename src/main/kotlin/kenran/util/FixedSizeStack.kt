@@ -3,8 +3,11 @@ package kenran.util
 import java.util.*
 
 class FixedSizeStack<E>(maxSize: Int) {
-    val _maxSize = maxSize
-    val _items = LinkedList<E>()
+    private val _maxSize = maxSize
+    private val _items = LinkedList<E>()
+
+    val size
+        get() = _items.size
 
     fun push(item: E) {
         if (_items.size >= _maxSize) {
@@ -12,4 +15,6 @@ class FixedSizeStack<E>(maxSize: Int) {
         }
         _items.push(item)
     }
+
+    fun peek(index: Int): E = _items[index]
 }

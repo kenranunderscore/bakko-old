@@ -5,6 +5,10 @@ import robocode.util.Utils
 import java.awt.geom.Point2D
 import java.awt.geom.Rectangle2D
 
+fun bulletTravelTime(distance: Double, bulletPower: Double): Double {
+    return distance / bulletVelocity(bulletPower)
+}
+
 fun wallSmoothing(field: Rectangle2D.Double, botPosition: Point2D.Double, currentAngle: Double, orientation: Int, stickLength: Double): Double {
     var targetAngle = currentAngle
     while (!field.contains(project(botPosition, targetAngle, stickLength)))
@@ -37,8 +41,7 @@ fun maxEscapeAngle(speed: Double): Double {
     return Math.asin(8.0 / speed)
 }
 
-fun setBackAsFront(bot: AdvancedRobot, targetAngle: Double)
-{
+fun setBackAsFront(bot: AdvancedRobot, targetAngle: Double) {
     val angle = Utils.normalRelativeAngle(targetAngle - bot.headingRadians)
     if (Math.abs(angle) > Math.PI / 2.0)
     {

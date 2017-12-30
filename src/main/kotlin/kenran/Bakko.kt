@@ -1,12 +1,9 @@
 package kenran
 
-import kenran.gun.CircularTargetingGun
+import kenran.gun.PatternMatcher
 import kenran.movement.Surfboard
 import kenran.radar.LockingRadar
-import robocode.AdvancedRobot
-import robocode.BulletHitBulletEvent
-import robocode.HitByBulletEvent
-import robocode.ScannedRobotEvent
+import robocode.*
 import java.awt.Graphics2D
 import java.awt.geom.Point2D
 
@@ -17,14 +14,14 @@ class Bakko: AdvancedRobot() {
 
     private lateinit var _radar: LockingRadar
     private lateinit var _surfboard: Surfboard
-    private lateinit var _gun: CircularTargetingGun
+    private lateinit var _gun: PatternMatcher
 
     var position: Point2D.Double = Point2D.Double()
 
     override fun run() {
         _radar = LockingRadar(this, RADAR_LOCK_MULTIPLIER)
         _surfboard = Surfboard(this)
-        _gun = CircularTargetingGun(this)
+        _gun = PatternMatcher(this)
 
         isAdjustGunForRobotTurn = true
         isAdjustRadarForGunTurn = true
@@ -32,8 +29,7 @@ class Bakko: AdvancedRobot() {
         setTurnRadarRightRadians(Double.MAX_VALUE)
 
         while (true) {
-            scan()
-
+            execute()
         }
     }
 
@@ -54,5 +50,9 @@ class Bakko: AdvancedRobot() {
 
     override fun onPaint(g: Graphics2D) {
         _gun.onPaint(g)
+    }
+
+    override fun onSkippedTurn(event: SkippedTurnEvent?) {
+        println("SKIPPED A TURN! DANGER!")
     }
 }
