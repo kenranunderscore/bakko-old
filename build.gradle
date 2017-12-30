@@ -26,8 +26,9 @@ dependencies {
     compile files('lib/robocode.jar')
 }
 
-def gitHash = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
-def robotVersion = "${project.version}.${gitHash}"
+def gitDescribe = 'git describe'.execute([], project.rootDir).text.trim()
+def gitVersion = gitDescribe.substring(0, gitDescribe.length() - 9)
+def robotVersion = "${gitVersion}"
 
 jar.archiveName = "${group}.${name}_${robotVersion}.jar"
 
